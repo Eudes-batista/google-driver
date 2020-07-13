@@ -31,7 +31,10 @@ public class DriveQuickstart {
             List<FileDrive> filesDrivers = listFileDrive.getFilesDrivers();
             for (FileDrive filesDriver : filesDrivers) {
                 if (filesDriver.getName().equals("saiph.sql")) {
-                    new DownloadFileDrive(service, filesDriver.getId(), "saiph.sql").download();
+                    DownloadFileDrive downloadFileDrive = new DownloadFileDrive(service, filesDriver.getId());
+                    downloadFileDrive.setOriginPathFile("saiph.sql");
+                    downloadFileDrive.setSaveFile(true);
+                    downloadFileDrive.download();
                     break;
                 }
             }

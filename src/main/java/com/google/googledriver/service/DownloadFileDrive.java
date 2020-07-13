@@ -10,12 +10,13 @@ public class DownloadFileDrive {
 
     private final Drive service;
     private final String fileId;
-    private final String originPathFile;
+    private String originPathFile;
+    private boolean saveFile;
+    private byte[] fileContent;
 
-    public DownloadFileDrive(Drive service, String fileId, String originPathFile) {
+    public DownloadFileDrive(Drive service, String fileId) {
         this.service = service;
         this.fileId = fileId;
-        this.originPathFile = originPathFile;
     }
 
     public void download() throws IOException {
@@ -23,10 +24,25 @@ public class DownloadFileDrive {
         this.service.files().get(this.fileId)
                 .executeMediaAndDownloadTo(outputStream);
         byte[] byteArray = outputStream.toByteArray();
+        this.fileContent = byteArray;
+        if (!this.saveFile) {
+            return;
+        }
         try (PrintStream printStream = new PrintStream(new File(this.originPathFile))) {
             printStream.write(byteArray);
             printStream.flush();
         }
     }
 
+    public void setSaveFile(boolean saveFile) {
+        this.saveFile = saveFile;
+    }
+
+    public void setOriginPathFile(String originPathFile) {
+        this.originPathFile = originPathFile;
+    }
+
+    public byte[] getFileContent() {
+        return fileContent;
+    }
 }
