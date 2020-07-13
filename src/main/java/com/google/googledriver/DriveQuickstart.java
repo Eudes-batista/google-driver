@@ -2,10 +2,11 @@ package com.google.googledriver;
 
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
-import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.model.FileList;
+import com.google.googledriver.exception.UploadException;
 import com.google.googledriver.model.Credentials;
 import com.google.googledriver.service.DriverService;
+import com.google.googledriver.service.UploadFile;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -26,8 +27,25 @@ public class DriveQuickstart {
 
             String json = installed.toString();
             Drive service = new DriverService(json).driveService();
-            listarArquivos(service);
-        } catch (GeneralSecurityException | IOException ex) {
+//            UploadFile uploadFile = new UploadFile(
+//                    service,
+//                    Arrays.asList("1kLRVGdAlpNdrBfPSXmdpgfUs6xhhOxF_"),
+//                    "Schemas.rar",
+//                    "/home/administrador/NetBeansProjects/googleDriver/Schemas.rar",
+//                    "application/x-zip-compressed"
+//            );
+            UploadFile uploadFile = new UploadFile(
+                    service,
+                    "/home/administrador/NetBeansProjects/googleDriver/Schemas.rar",
+                    "application/x-zip-compressed"
+            );
+            uploadFile.send();
+
+            String fileId = uploadFile.getFileId();
+            System.out.println("fileId = " + fileId);
+            String fileShared = uploadFile.getFileShared();
+            System.out.println("fileShared = " + fileShared);
+        } catch (GeneralSecurityException | IOException | UploadException ex) {
             System.out.println("ex = " + ex.getMessage());
         }
     }
@@ -47,18 +65,5 @@ public class DriveQuickstart {
                 System.out.printf("%s (%s) %s %s\n", file.getName(), file.getMimeType(), file.getShared(), file.getWebViewLink());
             }
         }
-    }
-
-    private static void upload(Drive service) throws IOException {
-        File fileMetadata = new File();
-        fileMetadata.setName("Schemas.rar");
-        fileMetadata.setParents(List.of("1kLRVGdAlpNdrBfPSXmdpgfUs6xhhOxF_"));
-        java.io.File filePath = new java.io.File("/home/administrador/NetBeansProjects/googleDriver/Schemas.rar");
-        FileContent mediaContent = new FileContent("application/x-zip-compressed", filePath);
-        File file = service.files().create(fileMetadata, mediaContent)
-                .setSupportsTeamDrives(true)
-                .setFields("id,webViewLink")
-                .execute();
-        System.out.println("File ID: " + file.getWebViewLink());
     }
 }
