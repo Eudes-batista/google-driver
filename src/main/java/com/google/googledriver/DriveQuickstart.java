@@ -45,7 +45,8 @@ public class DriveQuickstart {
 //                    "/home/administrador/NetBeansProjects/googleDriver/Schemas.rar",
 //                    "application/x-zip-compressed"
 //            );
-//            UploadFile uploadFile = new UploadFile(
+//            uploadFile.send();
+//            uploadFile = new UploadFile(
 //                    service,
 //                    "/home/administrador/NetBeansProjects/googleDriver/Schemas.rar",
 //                    "application/x-zip-compressed"
