@@ -6,17 +6,18 @@ import com.google.api.services.drive.model.FileList;
 import com.google.googledriver.exception.ListFileDriverException;
 import com.google.googledriver.model.FileDrive;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListFileDrive {
 
-    private final Drive service;
     private final List<FileDrive> filesDrivers;
     private final int pageSize;
+    private Drive service;
 
-    public ListFileDrive(Drive service, int pageSize) {
-        this.service = service;
+    public ListFileDrive(String credentials, int pageSize) throws GeneralSecurityException, IOException{
+        this.fillDrive(credentials);
         this.filesDrivers = new ArrayList<>();
         this.pageSize = pageSize;
     }
@@ -34,11 +35,16 @@ public class ListFileDrive {
         files.forEach(this::addFileDrive);
     }
 
-    private void addFileDrive(File file) {
-        this.filesDrivers.add(new FileDrive(file.getId(), file.getName(), file.getMimeType(), file.getShared(), file.getWebViewLink()));
-    }
-
     public List<FileDrive> getFilesDrivers() {
         return filesDrivers;
     }
+
+    private void addFileDrive(File file) {
+        this.filesDrivers.add(new FileDrive(file.getId(), file.getName(), file.getMimeType(), file.getShared(), file.getWebViewLink()));
+    }
+    
+    private void fillDrive(String credentials) throws GeneralSecurityException, IOException{
+        this.service = new DriverService(credentials).driveService();
+    }
+    
 }

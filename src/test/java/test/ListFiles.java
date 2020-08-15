@@ -1,9 +1,7 @@
 package test;
 
-import com.google.api.services.drive.Drive;
 import com.google.googledriver.exception.ListFileDriverException;
 import com.google.googledriver.model.Credentials;
-import com.google.googledriver.service.DriverService;
 import com.google.googledriver.service.ListFileDrive;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -22,15 +20,14 @@ public class ListFiles {
 
         String json = installed.toString();
         try {
-            Drive service = new DriverService(json).driveService();
-            files(service);
+            files(json);
         } catch (GeneralSecurityException | IOException | ListFileDriverException ex) {
             System.out.println("ex = " + ex);
         }
     }
 
-    private static void files(Drive service) throws IOException, ListFileDriverException {
-        ListFileDrive listFileDrive = new ListFileDrive(service, 50);
+    private static void files(String credentials) throws IOException, ListFileDriverException, GeneralSecurityException {
+        ListFileDrive listFileDrive = new ListFileDrive(credentials, 50);
         listFileDrive.files();
         listFileDrive.getFilesDrivers()
                 .forEach(System.out::println);

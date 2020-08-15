@@ -1,11 +1,9 @@
 package test;
 
-import com.google.api.services.drive.Drive;
 import com.google.googledriver.exception.ListFileDriverException;
 import com.google.googledriver.model.Credentials;
 import com.google.googledriver.model.FileDrive;
 import com.google.googledriver.service.DownloadFileDrive;
-import com.google.googledriver.service.DriverService;
 import com.google.googledriver.service.ListFileDrive;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -24,18 +22,23 @@ public class DownloadTest {
         installed.setRedirect_uris(new String[]{"urn:ietf:wg:oauth:2.0:oob", "http://localhost"});
         String json = installed.toString();
         try {
-            Drive service = new DriverService(json).driveService();
-            findPageSize(service).stream()
+            findPageSize(json).stream()
                     .filter(file -> verifyFileName(file))
-                    .forEach(file -> download(service, file));
+                    .forEach(file -> {
+                        try {
+                            download(json, file);
+                        } catch (GeneralSecurityException ex) {
+                            ex.printStackTrace();
+                        }
+                    });
         } catch (IOException | ListFileDriverException | GeneralSecurityException ex) {
             System.out.println("ex = " + ex);
         }
     }
 
-    private static void download(Drive service, FileDrive filesDriver) {
+    private static void download(String credentials, FileDrive filesDriver) throws GeneralSecurityException {
         try {
-            DownloadFileDrive downloadFileDrive = new DownloadFileDrive(service, filesDriver.getId());
+            DownloadFileDrive downloadFileDrive = new DownloadFileDrive(credentials, filesDriver.getId());
             downloadFileDrive.setOriginPathFile("saiph.sql");
             downloadFileDrive.setSaveFile(true);
             downloadFileDrive.download();
@@ -48,8 +51,8 @@ public class DownloadTest {
         return filesDriver.getName().equals("saiph.sql");
     }
 
-    private static List<FileDrive> findPageSize(Drive service) throws IOException, ListFileDriverException {
-        ListFileDrive listFileDrive = new ListFileDrive(service, 50);
+    private static List<FileDrive> findPageSize(String credentials) throws IOException, ListFileDriverException, GeneralSecurityException {
+        ListFileDrive listFileDrive = new ListFileDrive(credentials, 50);
         listFileDrive.files();
         List<FileDrive> filesDrivers = listFileDrive.getFilesDrivers();
         return filesDrivers;

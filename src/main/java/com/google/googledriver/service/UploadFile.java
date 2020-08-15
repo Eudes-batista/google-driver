@@ -5,20 +5,21 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.googledriver.exception.UploadException;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.List;
 
 public class UploadFile {
 
-    private final Drive service;
     private final String originFile;
     private final String fileType;
+    private Drive service;
     private List<String> folders;
     private String targetFile;
     private String fileId;
     private String fileShared;
 
-    public UploadFile(Drive service, List<String> folders, String targetFile, String originFile, String fileType) throws UploadException {
-        this.service = service;
+    public UploadFile(String credentials,List<String> folders, String targetFile, String originFile, String fileType) throws UploadException, GeneralSecurityException, IOException {
+        this.fillDrive(credentials);
         this.folders = folders;
         this.targetFile = targetFile;
         this.originFile = originFile;
@@ -26,8 +27,8 @@ public class UploadFile {
         this.validation();
     }
 
-    public UploadFile(Drive service, String originFile, String fileType) throws UploadException {
-        this.service = service;
+    public UploadFile(String credentials,String originFile, String fileType) throws UploadException, GeneralSecurityException, IOException {
+        this.fillDrive(credentials);
         this.originFile = originFile;
         this.fileType = fileType;
         this.validation();
@@ -55,6 +56,10 @@ public class UploadFile {
 
     public String getFileShared() {
         return fileShared;
+    }
+    
+    private void fillDrive(String credentials) throws GeneralSecurityException, IOException{
+        this.service = new DriverService(credentials).driveService();
     }
 
     private void validation() throws UploadException {

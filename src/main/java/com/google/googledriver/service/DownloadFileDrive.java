@@ -5,17 +5,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.security.GeneralSecurityException;
 
 public class DownloadFileDrive {
 
-    private final Drive service;
     private final String fileId;
+    private Drive service;
     private String originPathFile;
     private boolean saveFile;
     private byte[] fileContent;
 
-    public DownloadFileDrive(Drive service, String fileId) {
-        this.service = service;
+    public DownloadFileDrive(String credentials, String fileId) throws GeneralSecurityException, IOException {
+        this.fillDrive(credentials);
         this.fileId = fileId;
     }
 
@@ -44,5 +45,9 @@ public class DownloadFileDrive {
 
     public byte[] getFileContent() {
         return fileContent;
+    }
+    
+    private void fillDrive(String credentials) throws GeneralSecurityException, IOException{
+        this.service = new DriverService(credentials).driveService();
     }
 }
