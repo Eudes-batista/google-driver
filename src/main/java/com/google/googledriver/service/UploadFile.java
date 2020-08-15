@@ -18,28 +18,21 @@ public class UploadFile {
     private String fileId;
     private String fileShared;
 
-    public UploadFile(String credentials,List<String> folders, String targetFile, String originFile, String fileType) throws UploadException, GeneralSecurityException, IOException {
+    public UploadFile(String credentials, List<String> folders, String targetFile, String originFile, String fileType) throws UploadException, GeneralSecurityException, IOException {
         this.fillDrive(credentials);
         this.folders = folders;
         this.targetFile = targetFile;
         this.originFile = originFile;
         this.fileType = fileType;
-        this.validation();        
-    }
-    
-    public UploadFile(String credentials,List<String> folders, String originFile, String fileType) throws UploadException, GeneralSecurityException, IOException {
-        this.fillDrive(credentials);
-        this.folders = folders;
-        this.originFile = originFile;
-        this.fileType = fileType;
-        this.validation();        
+        this.validation();
     }
 
-    public UploadFile(String credentials,String originFile, String fileType) throws UploadException, GeneralSecurityException, IOException {
-        this.fillDrive(credentials);
-        this.originFile = originFile;
-        this.fileType = fileType;
-        this.validation();
+    public UploadFile(String credentials, List<String> folders, String originFile, String fileType) throws UploadException, GeneralSecurityException, IOException {
+        this(credentials, folders, null, originFile, fileType);
+    }
+
+    public UploadFile(String credentials, String originFile, String fileType) throws UploadException, GeneralSecurityException, IOException {
+        this(credentials, null,null, originFile, fileType);
     }
 
     public void send() throws IOException {
@@ -65,8 +58,8 @@ public class UploadFile {
     public String getFileShared() {
         return fileShared;
     }
-    
-    private void fillDrive(String credentials) throws GeneralSecurityException, IOException{
+
+    private void fillDrive(String credentials) throws GeneralSecurityException, IOException {
         this.service = new DriverService(credentials).driveService();
     }
 
