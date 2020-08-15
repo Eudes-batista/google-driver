@@ -24,7 +24,15 @@ public class UploadFile {
         this.targetFile = targetFile;
         this.originFile = originFile;
         this.fileType = fileType;
-        this.validation();
+        this.validation();        
+    }
+    
+    public UploadFile(String credentials,List<String> folders, String originFile, String fileType) throws UploadException, GeneralSecurityException, IOException {
+        this.fillDrive(credentials);
+        this.folders = folders;
+        this.originFile = originFile;
+        this.fileType = fileType;
+        this.validation();        
     }
 
     public UploadFile(String credentials,String originFile, String fileType) throws UploadException, GeneralSecurityException, IOException {
