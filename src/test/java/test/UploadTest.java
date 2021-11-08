@@ -2,7 +2,9 @@ package test;
 
 import com.google.googledriver.service.UploadFile;
 import com.google.googledriver.exception.UploadException;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
@@ -29,14 +31,9 @@ public class UploadTest {
     }
 
     private static void uploadFile(String credentials) throws IOException, UploadException, GeneralSecurityException {
-        UploadFile uploadFile = new UploadFile(
-                credentials,
-                Arrays.asList("1J8KhuLsBMKxm0b2kFUA8nB8SiOge2Glx"),
-                "fundo3.png",
-                "/home/eudes/Pictures/fundo3.png",
-                "image/jpeg"
-        );
-        uploadFile.send();
+        UploadFile uploadFile = new UploadFile(credentials, Arrays.asList("1J8KhuLsBMKxm0b2kFUA8nB8SiOge2Glx"));
+        InputStream arquivo = new FileInputStream("/home/eudes/Pictures/biscoitos-bolachas-juntos.jpg");
+        uploadFile.send("biscoitos-bolachas-juntos", arquivo);
         String fileId = uploadFile.getFileId();
         System.out.println("fileId = " + fileId);
         String fileShared = uploadFile.getFileShared();

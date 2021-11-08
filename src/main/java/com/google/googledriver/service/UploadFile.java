@@ -38,6 +38,13 @@ public class UploadFile {
         this(credentials, null, null, originFile, fileType);
     }
 
+    public UploadFile(String credentials, List<String> folders) throws UploadException, GeneralSecurityException, IOException {
+        this.fillDrive(credentials);
+        this.folders = folders;
+        this.originFile = null;
+        this.fileType = null;
+    }
+
     public void send() throws IOException {
         java.io.File filePath = new java.io.File(this.originFile);
         File fileMetadata = new File();
@@ -54,13 +61,14 @@ public class UploadFile {
         this.fileShared = file.getWebViewLink();
     }
 
-    public void send(String name,InputStream inputStream) throws UploadException, IOException {
+    public void send(String name, InputStream inputStream) throws UploadException, IOException {
         File fileMetadata = new File();
         fileMetadata.setName(name);
         if (this.folders != null) {
             fileMetadata.setParents(this.folders);
         }
-        AbstractInputStreamContent  abstractInputStreamContent = new InputStreamContent(name, inputStream);
+        AbstractInputStreamContent abstractInputStreamContent = new InputStreamContent(name, inputStream);
+        abstractInputStreamContent.setType(null);
         File file = service.files().create(fileMetadata, abstractInputStreamContent)
                 .setSupportsTeamDrives(true)
                 .setFields("id,webViewLink")
