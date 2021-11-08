@@ -16,15 +16,15 @@ public class ListFileDrive {
     private final int pageSize;
     private Drive service;
 
-    public ListFileDrive(String credentials, int pageSize) throws GeneralSecurityException, IOException{
+    public ListFileDrive(String credentials, int pageSize) throws GeneralSecurityException, IOException {
         this.fillDrive(credentials);
         this.filesDrivers = new ArrayList<>();
         this.pageSize = pageSize;
-    }
+    }   
 
     public void files() throws IOException, ListFileDriverException {
         this.filesDrivers.clear();
-        FileList result = service.files().list()
+        FileList result = this.service.files().list()
                 .setPageSize(this.pageSize)
                 .setFields("nextPageToken, files(id, name,mimeType,shared,webViewLink)")
                 .execute();
@@ -34,6 +34,12 @@ public class ListFileDrive {
         }
         files.forEach(this::addFileDrive);
     }
+    
+    public File findFile(String id) throws IOException {        
+        this.filesDrivers.clear();
+        return this.service.files().get(id).execute();
+    }
+    
 
     public List<FileDrive> getFilesDrivers() {
         return filesDrivers;
@@ -42,9 +48,9 @@ public class ListFileDrive {
     private void addFileDrive(File file) {
         this.filesDrivers.add(new FileDrive(file.getId(), file.getName(), file.getMimeType(), file.getShared(), file.getWebViewLink()));
     }
-    
-    private void fillDrive(String credentials) throws GeneralSecurityException, IOException{
+
+    private void fillDrive(String credentials) throws GeneralSecurityException, IOException {
         this.service = new DriverService(credentials).driveService();
     }
-    
+
 }

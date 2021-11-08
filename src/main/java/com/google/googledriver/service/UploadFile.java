@@ -1,10 +1,13 @@
 package com.google.googledriver.service;
 
+import com.google.api.client.http.AbstractInputStreamContent;
 import com.google.api.client.http.FileContent;
+import com.google.api.client.http.InputStreamContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.googledriver.exception.UploadException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
@@ -32,7 +35,7 @@ public class UploadFile {
     }
 
     public UploadFile(String credentials, String originFile, String fileType) throws UploadException, GeneralSecurityException, IOException {
-        this(credentials, null,null, originFile, fileType);
+        this(credentials, null, null, originFile, fileType);
     }
 
     public void send() throws IOException {
@@ -44,6 +47,21 @@ public class UploadFile {
         }
         FileContent mediaContent = new FileContent(this.fileType, filePath);
         File file = service.files().create(fileMetadata, mediaContent)
+                .setSupportsTeamDrives(true)
+                .setFields("id,webViewLink")
+                .execute();
+        this.fileId = file.getId();
+        this.fileShared = file.getWebViewLink();
+    }
+
+    public void send(String name,InputStream inputStream) throws UploadException, IOException {
+        File fileMetadata = new File();
+        fileMetadata.setName(name);
+        if (this.folders != null) {
+            fileMetadata.setParents(this.folders);
+        }
+        AbstractInputStreamContent  abstractInputStreamContent = new InputStreamContent(name, inputStream);
+        File file = service.files().create(fileMetadata, abstractInputStreamContent)
                 .setSupportsTeamDrives(true)
                 .setFields("id,webViewLink")
                 .execute();
