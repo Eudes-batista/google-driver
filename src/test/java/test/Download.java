@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
-public class DownloadTest {
+public class Download {
 
     public static void main(String[] args) {
         Credentials.Installed installed = Credentials.newInstalled();
